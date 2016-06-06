@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <style type="text/css">
+        
+        /*展示图片切换的div样式*/
+         #ShowImg {
+             width: 599px;
+             height: 324px;
+             background-image: url("imgs/1.jpg");/*注意自己的图片路径和图片名称*/
+             margin: 0 auto;
+         }
+         /*显示点击切换按钮的div*/
+         #Nav {
+            height: 26px;
+            padding-top: 280px;
+            padding-left: 480px;
+            
+        }
+        /*这里是切换按钮，这里用li实现*/
+         #Nav ul li {
+            display: block;
+            font-size: 9px;
+            padding-top: 3px;
+            float: left;
+            margin: 2px;
+            width: 19px;
+            cursor: pointer;
+            color: #7f0019;
+            font-family: "arial";
+            height: 19px;
+            background-color: #fff;
+            border: 1px solid #cecece;
+            text-align: center;
+        }
+    </style>
+
+    <!--引入jquer脚本-->
+    <script src="script/jquery-1.8.0.min.js"></script>
+    
+    <!--js代码具体实现：-->
+    <script type="text/javascript">
+        $(function () {
+          
+            //开启一个定时器，设置一个适当的时间段，让图片实现不断切换效果，这里设置的是1000ms即是1m
+            setInterval(function () {
+                //先从隐藏域的flag中获取它的值
+                var j = $("#flag").val();
+                //如果这个值等于-1，这里约定鼠标正在该按钮上，什么都不做，直接返回。
+                if (j==-1) {
+                    return;
+                }
+                //否则根据j的值，设置相应的事件
+                var lits = $("#Nav li");
+                if (j-1>=0) {
+                    setStyleMouseLeave(lits[j-1]);
+                } else {
+                    setStyleMouseLeave(lits[2]);
+                }
+
+                setStyleMouseOver(lits[j]);
+
+                j++;
+                if (j>2) {
+                    j = 0;
+                }
+                $("#flag").val(j);
+
+            }, 1000);
+
+            //获取div nav下所有的li元素，并为他们绑定鼠标进入，和鼠标离开事件
+            $("#Nav li").mouseover(function (i) {
+
+                //该函数修改自己的样式，以及图片
+                setStyleMouseOver(this);
+                //设置兄弟元素的样式，即是其余的两个li
+                $(this).siblings().css({
+                    color: 'rgb(127, 0, 25)',
+                    fontWeight: 'normal',
+                    background: 'rgb(255, 255, 255)',
+                });
+              //设置flag的值为-1，以达到暂停定时器的效果
+                $("#flag").val("-1");
+
+
+            })
+                        .mouseleave(function () {
+
+                          //当鼠标离开时，要设置自己样式
+                         setStyleMouseLeave(this);
+                            //获取当前的li中n的属性，并根据n的值，来判断当再次执行定时器时，哪一个li被选中
+                            var n = $(this).attr("n");
+
+                            if (n/1 + 1 <= 2) {
+                                n = n*1 + 1;
+                            } else {
+                                n = 0;
+                            }
+                           //鼠标离开后更新flag的值，使flag的值，正好等于下次将要遍历到的li的属性n的值，以达到重启定时器的效果，但定时器从未停止，也没有重启功能
+                            $("#flag").val(n);
+                        });;
+
+        });
+
+        //封装出的两个公共的函数
+
+        function setStyleMouseOver(li) {
+
+            $(li).css({
+                color: 'rgb(255, 255, 255)',
+                fontWeight: 'bolder',
+                background: 'rgb(218, 10, 10)',
+            });
+            var url = $(li).attr("url");
+            $("#ShowImg").css("background-image", "url(" + url + ")");
+        }
+
+        function setStyleMouseLeave(li) {
+
+            $(li).css({
+                color: 'rgb(127, 0, 25)',
+                fontWeight: 'normal',
+                background: 'rgb(255, 255, 255)',
+            });
+       
+        }
+
+    </script>
+
+</head>
+<body>
+    <div id="ShowImg">
+        <div id="Nav">
+            <ul>
+                <!--这里的url属性和n属性是我自己添加的，为了编程方便，标签本身是没有这些属性的，注意这里的url根据自己放置图片的实际位置设置值-->
+                <li url="imgs/1.jpg"  n="0" style="color: rgb(255, 255, 255); font-weight: bolder; background: rgb(218, 10, 10);">1</li>
+                <li url="imgs/2.gif"  n="1" >2</li>
+                <li url="imgs/3.jpg"  n="2" >3</li>
+               
+            </ul>
+        </div>
+    </div>
+    <!--标识-->
+    <input type="hidden" name="name" id="flag" value="1" />
+</body>
+</html>
